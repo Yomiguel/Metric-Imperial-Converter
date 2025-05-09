@@ -9,23 +9,37 @@ const router = express.Router();
 module.exports = function (app) {
 
   let convertHandler = new ConvertHandler();
-
   router.get('/api/convert', (req, res) => {
-    const input = req.query.input;
-    const initNum = convertHandler.getNum(input);
-    const initUnit = convertHandler.getUnit(input);
-    const returnNum = convertHandler.convert(initNum, initUnit);
-    const returnUnit = convertHandler.getReturnUnit(initUnit);
-    const string = convertHandler.getString(initNum, initUnit, returnNum, returnUnit);
-    
-    res.json({
-      initNum: initNum,
-      initUnit: initUnit,
-      returnNum: returnNum,
-      returnUnit: returnUnit,
-      string: string,
-    })
-  });
+    try {
+      const input = req.query.input;
+      const initNum = convertHandler.getNum(input);
+      const initUnit = convertHandler.getUnit(input);
+      const returnNum = convertHandler.convert(initNum, initUnit);
+      const returnUnit = convertHandler.getReturnUnit(initUnit);
+      const string = convertHandler.getString(initNum, initUnit, returnNum, returnUnit);
 
+      if (returnUnit === 'invalid unit' && returnNum === 'invalid number') {
+        res.send(`${returnNum} and ${returnUnit}`);
+      } else if (returnNum === 'invalid number') {
+        res.send(`${returnNum}`);
+      } else if (returnUnit === 'invalid unit') {
+        res.send(`${returnUnit}`);
+      } else {
+        res.json({
+          initNum: initNum,
+          initUnit: initUnit,
+          returnNum: returnNum,
+          returnUnit: returnUnit,
+          string: string,
+        });
+      }
+    } catch (error) {
+      console.error('Error in /api/convert:', error);
+      res.status(501).json({
+        error: 'Internal Server Error',
+        message: 'An unexpected error occurred while processing your request'
+      });
+    }
+  });
   app.use(router);
 };
