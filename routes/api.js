@@ -14,17 +14,16 @@ module.exports = function (app) {
       const input = req.query.input;
       const initNum = convertHandler.getNum(input);
       const initUnit = convertHandler.getUnit(input);
-      const returnNum = convertHandler.convert(initNum, initUnit);
-      const returnUnit = convertHandler.getReturnUnit(initUnit);
-      const string = convertHandler.getString(initNum, initUnit, returnNum, returnUnit);
-
-      if (returnUnit === 'invalid unit' && returnNum === 'invalid number') {
-        res.send(`${returnNum} and ${returnUnit}`);
-      } else if (returnNum === 'invalid number') {
-        res.send(`${returnNum}`);
-      } else if (returnUnit === 'invalid unit') {
-        res.send(`${returnUnit}`);
+      if (initUnit === 'invalid unit' && initNum === 'invalid number') {
+        res.send(`${initNum} and ${initUnit}`);
+      } else if (initUnit === 'invalid unit') {
+        res.send(`${initUnit}`);
+      } else if (initNum === 'invalid number') {
+        res.send(`${initNum}`)
       } else {
+        const returnNum = convertHandler.convert(initNum, initUnit);
+        const returnUnit = convertHandler.getReturnUnit(initUnit);
+        const string = convertHandler.getString(initNum, initUnit, returnNum, returnUnit);
         res.json({
           initNum: initNum,
           initUnit: initUnit,
@@ -32,7 +31,7 @@ module.exports = function (app) {
           returnUnit: returnUnit,
           string: string,
         });
-      }
+      } 
     } catch (error) {
       console.error('Error in /api/convert:', error);
       res.status(501).json({
