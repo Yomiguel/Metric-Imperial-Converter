@@ -1,28 +1,48 @@
 function ConvertHandler() {
-
+  //This method allows to get numeric part of the query param.
   this.getNum = function (input) {
     let result;
     const numRegex = /\d+(?:\.\d+)?/g;
-    const match = input.match(numRegex);
-    if (match) {
-      if (match.length > 2) {
-        result = 'invalid number';
-      } else if (match.length === 2) {
-        result = parseFloat(match[0]) / parseFloat(match[1]);
-      } else if (match.length === 1) {
-        result = parseFloat(match[0]);
+    const operatorRegex = /([*\/+-]{1,}|(?<!\d)[*\/+-](?!\d))/g;
+    const numMatch = input.match(numRegex);
+    const operatorMatch = input.match(operatorRegex);
+    if (numMatch) {
+      if (operatorMatch) {
+        if (operatorMatch[0] === '/') {
+          console.log(1)
+          if (numMatch.length > 2) {
+            result = 'invalid number';
+          } else if (numMatch.length === 2) {
+            result = parseFloat(numMatch[0]) / parseFloat(numMatch[1]);
+          }
+        } else {
+          return 'invalid number';
+        }
+      } else {
+        result = parseFloat(numMatch[0]);
       }
     } else {
       result = 1;
     }
-    return result;
+    return Number(result);
   };
 
+  //This method allows to get the units in the query param.
   this.getUnit = function (input) {
     let result;
     const unitRegex = /\s*(mi|km|l|gal|lbs|kg)$/i;
     const match = input.match(unitRegex);
-    result = match ? match[0] === 'L' ? match[0] : match[0] === 'l' ? 'L' : match[0].toLowerCase().replace(/^\s+/, '') : 'invalid unit';
+    if (match) {
+      if (match[0] === 'L') {
+        result = match[0];
+      } else if (match[0] === 'l') {
+        result = 'L';
+      } else {
+        result = match[0].toLowerCase().replace(/^\s+/, '');
+      }
+    } else {
+      result = 'invalid unit';
+    }
     return result;
   };
 
@@ -79,7 +99,7 @@ function ConvertHandler() {
       } else if (initUnit === 'mi') {
         result = initNum * miToKm;
       }
-      return result.toFixed(5);
+      return Number(result.toFixed(5));
     }
   };
 

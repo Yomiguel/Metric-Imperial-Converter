@@ -15,7 +15,7 @@ module.exports = function (app) {
       const initNum = convertHandler.getNum(input);
       const initUnit = convertHandler.getUnit(input);
       if (initUnit === 'invalid unit' && initNum === 'invalid number') {
-        res.send(`${initNum} and ${initUnit}`);
+        res.send(`${initNum} and unit`);
       } else if (initUnit === 'invalid unit') {
         res.send(`${initUnit}`);
       } else if (initNum === 'invalid number') {
@@ -31,7 +31,7 @@ module.exports = function (app) {
           returnUnit: returnUnit,
           string: string,
         });
-      } 
+      }
     } catch (error) {
       console.error('Error in /api/convert:', error);
       res.status(501).json({
