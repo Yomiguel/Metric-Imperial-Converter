@@ -9,9 +9,8 @@ function ConvertHandler() {
     if (numMatch) {
       if (operatorMatch) {
         if (operatorMatch[0] === '/') {
-          console.log(1)
           if (numMatch.length > 2) {
-            result = 'invalid number';
+            return 'invalid number';
           } else if (numMatch.length === 2) {
             result = parseFloat(numMatch[0]) / parseFloat(numMatch[1]);
           }
